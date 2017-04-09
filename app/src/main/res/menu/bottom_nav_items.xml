@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_recent"
+        android:title="@string/recent"
+        android:icon="@drawable/ic_home_black"
+        />
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/search"
+        android:icon="@drawable/ic_home_black"
+        />
+
+    <item
+        android:id="@+id/menu_list"
+        android:title="@string/list"
+        android:icon="@drawable/ic_home_black" />
+
+    <item
+        android:id="@+id/menu_new"
+        android:title="@string/new_recipe"
+        android:icon="@drawable/ic_home_black" />
+</menu>
