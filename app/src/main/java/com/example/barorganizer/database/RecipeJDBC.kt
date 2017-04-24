@@ -3,6 +3,7 @@ package com.example.barorganizer.database
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import com.example.barorganizer.database.dbo.RecipeDbo
 import com.example.barorganizer.database.dto.FullRecipeDto
 import com.example.barorganizer.database.dto.ListRecipeDto
 
@@ -22,7 +23,9 @@ class RecipeJDBC {
                 " $IMAGE blob, " +
                 " $NAME varchar(100) unique not null);"
 
-        val SELECT_ALL_SQL = "SELECT $ID, $DESCRIPTION, $URL. $IMAGE, $NAME FROM $RECIPE"
+        val SELECT_ALL_SQL = "SELECT $ID, $DESCRIPTION, $URL, $IMAGE, $NAME FROM $RECIPE"
+        val SELECT_WITH_ID = "SELECT $ID, $DESCRIPTION, $URL, $IMAGE, $NAME FROM $RECIPE WHERE $ID = ?"
+
     }
 
     fun addRecipe(fullRecipeDto: FullRecipeDto, db: SQLiteDatabase): Long {
@@ -45,6 +48,16 @@ class RecipeJDBC {
         db.setTransactionSuccessful()
         db.endTransaction()
         return recipes
+    }
+
+    fun getRecipe(db: SQLiteDatabase, id: Long) : RecipeDbo {
+        db.beginTransaction()
+        val cursor = db.rawQuery(SELECT_WITH_ID, arrayOf(id.toString()))
+        val recipe =  mapToDbo(cursor)
+        cursor.close()
+        db.setTransactionSuccessful()
+        db.endTransaction()
+        return recipe
     }
 
     fun mapToDbo(cursor: Cursor): RecipeDbo {

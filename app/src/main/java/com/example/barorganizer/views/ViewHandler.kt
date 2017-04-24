@@ -1,9 +1,11 @@
 package com.example.barorganizer.views
 
 import android.app.Fragment
+import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
+import com.example.barorganizer.R
 
 
 object ViewHandler {
@@ -22,5 +24,11 @@ object ViewHandler {
     fun runActivity(context: Context, className: Class<out AppCompatActivity>) {
         val myIntent = Intent(context, className)
         context.startActivity(myIntent)
+    }
+
+    fun replaceFragment(fragmentManager: FragmentManager, fragment: Fragment) {
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment, fragment)
+        fragmentTransaction.commit()
     }
 }

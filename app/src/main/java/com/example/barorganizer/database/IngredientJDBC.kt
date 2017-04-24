@@ -3,6 +3,8 @@ package com.example.barorganizer.database
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.text.TextUtils
+import com.example.barorganizer.database.dbo.IngredientDbo
 
 
 class IngredientJDBC {
@@ -16,15 +18,33 @@ class IngredientJDBC {
                 "$NAME varchar(50) unique);"
 
         private val SELECT_ALL_SQL = "SELECT $ID, $NAME FROM $INGREDIENT"
+
+        private val SELECT_WITH_ID = "SELECT $ID,  $NAME FROM $INGREDIENT WHERE $ID IN ( ? )"
     }
 
-    fun addIngredients(db: SQLiteDatabase, ingredients: List<String>) :List<Long> {
+    fun addIngredients(db: SQLiteDatabase, ingredients: List<String>): List<Pair<Long, String>> {
         db.beginTransaction()
-        val ids = ingredients.map { mapToContentValues(it) }
-                .map { db.insert(RecipieIngredientJDBC.RECIPE_INGREDIENT, null, it) }
+        val ids = ingredients
+                .map { i -> Pair(db.insert(INGREDIENT, null, mapToContentValues(i)), i) }
         db.setTransactionSuccessful()
         db.endTransaction()
         return ids
+    }
+
+    fun getIngredients(ids: List<Long>, db: SQLiteDatabase): List<IngredientDbo> {
+        val argument = TextUtils.join(",", ids)
+        db.beginTransaction()
+        val cursor = db.rawQuery(SELECT_WITH_ID, arrayOf(argument))
+        val recipes = generateSequence { if (cursor.moveToNext()) cursor else null }
+                .map { c ->
+                    IngredientDbo(c.getString(c.getColumnIndex(NAME)),
+                            c.getLong(c.getColumnIndex(ID)))
+                }
+                .toList()
+        cursor.close()
+        db.setTransactionSuccessful()
+        db.endTransaction()
+        return recipes
     }
 
     private fun mapToContentValues(ingredient: String): ContentValues {

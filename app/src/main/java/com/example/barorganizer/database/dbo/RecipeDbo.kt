@@ -1,5 +1,5 @@
-package com.example.barorganizer.database
+package com.example.barorganizer.database.dbo
 
 data class RecipeDbo(val id: Long, val name: String, val description: String?, val url: String?,
-                     val imgae: ByteArray?) {
+                     val image: ByteArray?) {
 }
